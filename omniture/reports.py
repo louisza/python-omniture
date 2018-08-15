@@ -8,6 +8,7 @@ import json
 
 from .elements import Value
 
+import warnings
 
 class InvalidReportError(Exception):
     """
@@ -71,7 +72,11 @@ class Report(object):
         if segments:
             self.segments = []
             for s in segments:
-                self.segments.append(self.query.suite.segments[s['id']])
+                try:
+                    self.segments.append(self.query.suite.segments[s['id']])
+                except KeyError as e:
+                    warnings.warn(repr(e))
+                    self.segments.append(s['id'])
         else:
             self.segments = None
 

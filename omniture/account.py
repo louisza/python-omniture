@@ -193,11 +193,15 @@ class Suite(Value):
     @utils.memoize
     def segments(self):
         """ Return the list of valid segments for the current report suite """
-        if self.account.cache:
-            data = self.request_cached('Segments', 'Get',{"accessLevel":"shared"})
-        else:
-            data = self.request('Segments', 'Get',{"accessLevel":"shared"})
-        return Value.list('segments', data, self, 'name', 'id',)
+        try:
+            if self.account.cache:
+                data = self.request_cached('Segments', 'Get',{"accessLevel":"shared"})
+            else:
+                data = self.request('Segments', 'Get',{"accessLevel":"shared"})
+            return Value.list('segments', data, self, 'name', 'id',)
+        except reports.InvalidReportError:
+            data = []
+            return Value.list('segments', data, self, 'name', 'id',)
 
     @property
     def report(self):
