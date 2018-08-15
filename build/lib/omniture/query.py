@@ -336,7 +336,7 @@ class Query(object):
         """ Run the report synchronously,"""
         print("sync called")
         if self.status == self.STATUSES[0]:
-            print("Queing Report")
+            print("Queueing Report")
             self.queue()
             self.probe(heartbeat, interval)
         if self.status == self.STATUSES[1]:
