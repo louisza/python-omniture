@@ -1,13 +1,14 @@
 # encoding: utf-8
 from __future__ import absolute_import
 from __future__ import print_function
+from future.utils import python_2_unicode_compatible
 
 import copy
 import logging
 
 from .import utils
 
-
+@python_2_unicode_compatible
 class Value(object):
     """ Searchable Dict. Can search on both the key and the value """
     def __init__(self, title, id, parent, extra={}):
