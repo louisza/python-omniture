@@ -135,9 +135,9 @@ _Note: to disable the ID check add the parameter `disable_validation=True`_
 
 **run()** -- `run(defaultheartbeat=True)` Run the report and check the queue until done. The `defaultheartbeat` writes a . (period) out to the console each time it checks on the report.
 
-**async()** -- Queue the report to Adobe but don't block the program. Use `is_ready()` to check on the report
+**asynch()** -- Queue the report to Adobe but don't block the program. Use `is_ready()` to check on the report
 
-**is_ready()** -- Checks if the queued report is finished running on the Adobe side. Can only be called after `async()`
+**is_ready()** -- Checks if the queued report is finished running on the Adobe side. Can only be called after `asynch()`
 
 **get_report()** -- Retrieves the report object for a finished report. Must call `is_ready()` first.
 
@@ -258,7 +258,7 @@ query = suite.report \
     .range('2017-01-01', '2017-01-31', granularity='day') \
     .metric('pageviews') \
     .filter(segment=segment)
-    .async()
+    .asynch()
   
 print(query.check())
 #>>>False    
