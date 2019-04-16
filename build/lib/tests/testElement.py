@@ -30,7 +30,7 @@ class ElementTest(unittest.TestCase):
                          .format(value, self.valueList[0]))
 
     def test_repr_html_(self):
-        self.assertEqual(self.valueList[0]._repr_html_(),\
+        self.assertEqual(str(self.valueList[0]._repr_html_()),\
                          "<td><b>123</b></td><td>ABC</td>",\
                          "The html value was: {}"\
                          .format(self.valueList[0]._repr_html_()))

@@ -72,7 +72,7 @@ class QueryTest(unittest.TestCase):
         self.assertIsInstance(self.analytics.suites[test_report_suite].report.run(), omniture.Report, "The run method doesn't work to create a report")
         
     @requests_mock.mock()
-    def test_report_run(self,m):
+    def test_report_run_detailed(self,m):
         """Make sure that the interval gets passed down. Needs a bit of work to make the test usefule """
         path = os.path.dirname(__file__)
 
@@ -92,7 +92,7 @@ class QueryTest(unittest.TestCase):
         self.assertIsInstance(self.analytics.suites[test_report_suite].report.run(interval=31), omniture.Report, "The run method doesn't work to create a report")
 
     @requests_mock.mock()
-    def test_report_async(self,m):
+    def test_report_asynch(self,m):
         """Make sure that are report are run Asynchrnously """
         path = os.path.dirname(__file__)
 
@@ -106,13 +106,13 @@ class QueryTest(unittest.TestCase):
         m.post('https://api.omniture.com/admin/1.4/rest/?method=Report.Get', text=json_response)
         m.post('https://api.omniture.com/admin/1.4/rest/?method=Report.Queue', text=report_queue)
 
-        query = self.analytics.suites[test_report_suite].report.async()
-        self.assertIsInstance(query, omniture.Query, "The Async method doesn't work")
+        query = self.analytics.suites[test_report_suite].report.asynch()
+        self.assertIsInstance(query, omniture.Query, "The Asynch method doesn't work")
         self.assertTrue(query.check(), "The check method is weird")
         self.assertIsInstance(query.get_report(), omniture.Report, "The check method is weird")
     
     @requests_mock.mock()
-    def test_report_bad_async(self,m):
+    def test_report_bad_asynch(self,m):
         """Make sure that are report can't be checked on out of order """
         path = os.path.dirname(__file__)
 
@@ -129,8 +129,8 @@ class QueryTest(unittest.TestCase):
         
         with self.assertRaises(omniture.query.ReportNotSubmittedError): 
             self.analytics.suites[test_report_suite].report.get_report()
-        query = self.analytics.suites[test_report_suite].report.async()
-        self.assertIsInstance(query, omniture.Query, "The Async method doesn't work")
+        query = self.analytics.suites[test_report_suite].report.asynch()
+        self.assertIsInstance(query, omniture.Query, "The Asynch method doesn't work")
         self.assertFalse(query.check(), "The check method is weird")
         with self.assertRaises(omniture.reports.ReportNotReadyError): 
             query.get_report()
@@ -483,7 +483,7 @@ class QueryTest(unittest.TestCase):
         self.assertEqual("test2",  report.raw['elements'][1]['classification'],"The second classification isn't getting set right")
 
     def test__dir__(self):
-        valid_value = ['async', 'breakdown', 'cancel', 'clone', 'currentData',
+        valid_value = ['asynch', 'breakdown', 'cancel', 'clone', 'currentData',
                  'element', 'filter', 'granularity', 'id', 'json',
                  'metric', 'queue', 'range', 'raw', 'report', 'request',
                  'run', 'set', 'sortBy', 'suite']

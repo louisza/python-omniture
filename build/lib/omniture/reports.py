@@ -1,6 +1,7 @@
 # encoding: utf-8
 from __future__ import absolute_import
 from __future__ import print_function
+from future.utils import python_2_unicode_compatible
 
 import logging
 from datetime import datetime
@@ -8,6 +9,7 @@ import json
 
 from .elements import Value
 
+import warnings
 
 class InvalidReportError(Exception):
     """
@@ -38,6 +40,7 @@ class ReportNotReadyError(Exception):
 
 
 #  TODO: also make this iterable (go through rows)
+@python_2_unicode_compatible
 class Report(object):
     """
     Object to parse the responses of the report
@@ -71,7 +74,11 @@ class Report(object):
         if segments:
             self.segments = []
             for s in segments:
-                self.segments.append(self.query.suite.segments[s['id']])
+                try:
+                    self.segments.append(self.query.suite.segments[s['id']])
+                except KeyError as e:
+                    warnings.warn(repr(e))
+                    self.segments.append(s['id'])
         else:
             self.segments = None
 
@@ -151,7 +158,9 @@ class Report(object):
             elif 'counts' in row:
                 for index, metric in enumerate(row['counts']):
                         #decide what type of event
-                        if self.metrics[index].decimals > 0 or metric.find('.') >-1:
+                        if metric == 'INF':
+                            data[str(self.metrics[index].id)] = 0
+                        elif self.metrics[index].decimals > 0 or metric.find('.') >-1:
                             data[str(self.metrics[index].id)] = float(metric)
                         else:
                             data[str(self.metrics[index].id)] = int(metric)
@@ -195,7 +204,7 @@ class Report(object):
         }
         return "<omniture.Report\n(metrics)\n{metrics}(elements)\n{elements}>".format(**info)
 
-    def __div__(self):
+    def __dir__(self):
         """ Give sensible options for Tab Completion mostly for iPython """
         return ['data','dataframe', 'metrics','elements', 'segments', 'period', 'type', 'timing']
 

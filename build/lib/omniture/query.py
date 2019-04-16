@@ -1,6 +1,7 @@
 # encoding: utf-8
 from __future__ import absolute_import
 from __future__ import print_function
+from future.utils import python_2_unicode_compatible
 
 import time
 from copy import copy, deepcopy
@@ -30,9 +31,10 @@ class ReportNotSubmittedError(Exception):
     """
     def __init__(self,error):
         self.log = logging.getLogger(__name__)
-        self.log.debug("Report Has not been submitted, call async() or run()")
+        self.log.debug("Report Has not been submitted, call asynch() or run()")
         super(ReportNotSubmittedError, self).__init__("Report Not Submitted")
 
+@python_2_unicode_compatible
 class Query(object):
     """ Lets you build a query to the Reporting API for Adobe Analytics.
 
@@ -252,10 +254,26 @@ class Query(object):
         """
         if self.raw.get('metrics', None) == None:
             self.raw['metrics'] = []
-        if disable_validation == False:
+
+        # If the metric provided is a list, return after list is read
+        if isinstance(metric, list):
+
+            for m in metric:
+
+                if disable_validation == False:
+                    self.raw['metrics'].append(self._serialize_value(m, 'metrics'))
+                else:
+                    self.raw['metrics'].append({"id":m})
+
+
+            return self
+
+        # Process single metric
+        if disable_validation == False:        
             self.raw['metrics'].append(self._serialize_value(metric, 'metrics'))
         else:
             self.raw['metrics'].append({"id":metric})
+            
         #self.raw['metrics'] = self._serialize_values(metric, 'metrics')
         #TODO allow this metric to accept a list
         return self
@@ -334,16 +352,14 @@ class Query(object):
 
     def sync(self, heartbeat=None, interval=0.01):
         """ Run the report synchronously,"""
-        print("sync called")
         if self.status == self.STATUSES[0]:
-            print("Queueing Report")
             self.queue()
             self.probe(heartbeat, interval)
         if self.status == self.STATUSES[1]:
             self.probe()
         return self.processed_response
 
-    def async(self, callback=None, heartbeat=None, interval=1):
+    def asynch(self, callback=None, heartbeat=None, interval=1):
         """ Run the Report Asynchrnously """
         if self.status == self.STATUSES[0]:
             self.queue()
@@ -403,6 +419,6 @@ class Query(object):
 
     def __dir__(self):
         """ Give sensible options for Tab Completion mostly for iPython """
-        return ['async','breakdown','cancel','clone','currentData', 'element',
+        return ['asynch','breakdown','cancel','clone','currentData', 'element',
                 'filter', 'granularity', 'id','json' ,'metric', 'queue', 'range', 'raw', 'report',
                 'request', 'run', 'set', 'sortBy', 'suite']

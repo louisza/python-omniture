@@ -1,6 +1,7 @@
 # encoding: utf-8
 from __future__ import absolute_import
 from __future__ import print_function
+from future.utils import python_2_unicode_compatible
 
 import time
 from copy import copy, deepcopy
@@ -30,9 +31,10 @@ class ReportNotSubmittedError(Exception):
     """
     def __init__(self,error):
         self.log = logging.getLogger(__name__)
-        self.log.debug("Report Has not been submitted, call async() or run()")
+        self.log.debug("Report Has not been submitted, call asynch() or run()")
         super(ReportNotSubmittedError, self).__init__("Report Not Submitted")
 
+@python_2_unicode_compatible
 class Query(object):
     """ Lets you build a query to the Reporting API for Adobe Analytics.
 
@@ -357,7 +359,7 @@ class Query(object):
             self.probe()
         return self.processed_response
 
-    def async(self, callback=None, heartbeat=None, interval=1):
+    def asynch(self, callback=None, heartbeat=None, interval=1):
         """ Run the Report Asynchrnously """
         if self.status == self.STATUSES[0]:
             self.queue()
@@ -417,6 +419,6 @@ class Query(object):
 
     def __dir__(self):
         """ Give sensible options for Tab Completion mostly for iPython """
-        return ['async','breakdown','cancel','clone','currentData', 'element',
+        return ['asynch','breakdown','cancel','clone','currentData', 'element',
                 'filter', 'granularity', 'id','json' ,'metric', 'queue', 'range', 'raw', 'report',
                 'request', 'run', 'set', 'sortBy', 'suite']

@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 from __future__ import print_function
+from future.utils import python_2_unicode_compatible
 
 import requests
 import binascii
@@ -17,7 +18,7 @@ from .query import Query
 from . import reports
 from . import utils
 
-
+@python_2_unicode_compatible
 class Account(object):
     """ A wrapper for the Adobe Analytics API. Allows you to query the reporting API """
     DEFAULT_ENDPOINT = 'https://api.omniture.com/admin/1.4/rest/'
@@ -193,11 +194,15 @@ class Suite(Value):
     @utils.memoize
     def segments(self):
         """ Return the list of valid segments for the current report suite """
-        if self.account.cache:
-            data = self.request_cached('Segments', 'Get',{"accessLevel":"shared"})
-        else:
-            data = self.request('Segments', 'Get',{"accessLevel":"shared"})
-        return Value.list('segments', data, self, 'name', 'id',)
+        try:
+            if self.account.cache:
+                data = self.request_cached('Segments', 'Get',{"accessLevel":"shared"})
+            else:
+                data = self.request('Segments', 'Get',{"accessLevel":"shared"})
+            return Value.list('segments', data, self, 'name', 'id',)
+        except reports.InvalidReportError:
+            data = []
+            return Value.list('segments', data, self, 'name', 'id',)
 
     @property
     def report(self):

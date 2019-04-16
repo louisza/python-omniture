@@ -303,7 +303,7 @@ class ReportTest(unittest.TestCase):
         self.assertEqual(trended._repr_html_(),basic_html)
 
     @requests_mock.mock()
-    def test__div__(self,m):
+    def test__dir__(self,m):
         """Test the __div__ method for tab autocompletion"""
         path = os.path.dirname(__file__)
 
@@ -317,9 +317,9 @@ class ReportTest(unittest.TestCase):
         m.post('https://api.omniture.com/admin/1.4/rest/?method=Report.Queue', text=report_queue)
 
         response = self.analytics.suites[test_report_suite].report.run()
-        self.assertEqual(response.__div__(), \
+        self.assertEqual(response.__dir__(), \
                          ['data','dataframe', 'metrics','elements', 'segments', 'period', 'type', 'timing'],
-                         "the __dir__ method broke: {}".format(response.__div__()))
+                         "the __dir__ method broke: {}".format(response.__dir__()))
 
     @requests_mock.mock()
     def test__repr__(self,m):
