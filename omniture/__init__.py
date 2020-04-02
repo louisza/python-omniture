@@ -14,7 +14,7 @@ from .version import __version__
 from .utils import AddressableList, affix
 
 
-def authenticate(username, secret=None, endpoint=Account.DEFAULT_ENDPOINT, prefix='', suffix=''):
+def authenticate(username, secret=None, endpoint=Account.DEFAULT_ENDPOINT, prefix='', suffix='', proxies = ''):
     """ Authenticate to the Adobe API using WSSE """
     #setup logging
     setup_logging()
@@ -28,7 +28,7 @@ def authenticate(username, secret=None, endpoint=Account.DEFAULT_ENDPOINT, prefi
         username = source[key_to_username]
         secret = source[key_to_secret]
 
-    return Account(username, secret, endpoint)
+    return Account(username, secret, endpoint, proxies)
 
 
 def queue(queries):
