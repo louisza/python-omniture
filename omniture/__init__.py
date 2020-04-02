@@ -28,7 +28,7 @@ def authenticate(username, secret=None, endpoint=Account.DEFAULT_ENDPOINT, prefi
         username = source[key_to_username]
         secret = source[key_to_secret]
 
-    return Account(username, secret, endpoint, proxies)
+    return Account(username, secret, endpoint, proxies=proxies)
 
 
 def queue(queries):
